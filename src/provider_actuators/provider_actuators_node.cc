@@ -77,12 +77,12 @@ namespace provider_actuators {
 
                 case interface_rs485::SendRS485Msg::CMD_IO_DROPPER_PORT:
                 case interface_rs485::SendRS485Msg::CMD_IO_DROPPER_STARBOARD:
-                    HandleDroppersCallback(receivedData->data);
+                    HandleDroppersCallback(receivedData->cmd, receivedData->data);
                     break;
 
                 case interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_PORT:
                 case interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD:
-                    HandleTorpedosCallback(receivedData->data);
+                    HandleTorpedosCallback(receivedData->cmd, receivedData->data);
                     break;
 
                 case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_BACK:
@@ -115,16 +115,45 @@ namespace provider_actuators {
 
         float temperature = temperatureTransfert.temperature;
 
+        // TODO Send msg
+
         ROS_INFO("Board IO temperature : %f", temperature);
 
     }
 
-    void ProviderActuatorsNode::HandleDroppersCallback(interface_rs485::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleDroppersCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data) {
+
+        std::string side;
+
+        if (cmd == interface_rs485::SendRS485Msg::CMD_IO_DROPPER_PORT)
+        {
+            side = "port";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_DROPPER_STARBOARD)
+        {
+            side = "starboard";
+        }
+
+        ROS_INFO("Dropper %s : %d", side.data(), data[0]);
+        // TODO send msg
 
     }
 
-    void ProviderActuatorsNode::HandleTorpedosCallback(interface_rs485::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleTorpedosCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data) {
 
+        std::string side;
+
+        if (cmd == interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_PORT)
+        {
+            side = "port";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD)
+        {
+            side = "starboard";
+        }
+
+        ROS_INFO("Torpedo %s : %d", side.data(), data[0]);
+        // TODO send msg
     }
 
     void ProviderActuatorsNode::HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd) {
@@ -149,6 +178,8 @@ namespace provider_actuators {
         }
 
         ROS_INFO("Leak on %s", side.data());
+
+        // TODO Send msg
 
     }
 
