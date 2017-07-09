@@ -100,6 +100,23 @@ namespace provider_actuators {
 
     void ProviderActuatorsNode::HandleTempCallback(interface_rs485::SendRS485Msg::_data_type data) {
 
+        union Temperature
+        {
+            unsigned char bytes[4];
+            float temperature;
+        };
+
+        Temperature temperatureTransfert;
+
+        temperatureTransfert.bytes[0] = data[0];
+        temperatureTransfert.bytes[1] = data[1];
+        temperatureTransfert.bytes[2] = data[2];
+        temperatureTransfert.bytes[3] = data[3];
+
+        float temperature = temperatureTransfert.temperature;
+
+        ROS_INFO("Board IO temperature : %f", temperature);
+
     }
 
     void ProviderActuatorsNode::HandleDroppersCallback(interface_rs485::SendRS485Msg::_data_type data) {
