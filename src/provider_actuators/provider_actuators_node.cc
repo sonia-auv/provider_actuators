@@ -34,6 +34,14 @@ namespace provider_actuators {
     ProviderActuatorsNode::ProviderActuatorsNode(const ros::NodeHandlePtr &nh)
         : nh(nh)
     {
+
+        rs485_publisherRx =
+                nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataRx", 100);
+
+        rs485_subscriberTx =
+                nh->subscribe("/interface_rs485/dataTx", 100, &ProviderActuatorsNode::CommunicationDataCallback, this);
+
+
     }
 
     //------------------------------------------------------------------------------
@@ -52,6 +60,12 @@ namespace provider_actuators {
 
        r.sleep();
       }
+    }
+
+    void ProviderActuatorsNode::CommunicationDataCallback(const interface_rs485::SendRS485Msg::ConstPtr &receivedData) {
+
+
+
     }
 
 

@@ -34,7 +34,7 @@ find_package(
         std_msgs
         message_generation
         message_runtime
-
+        interface_rs485
 )
 
 #===============================================================================
@@ -53,6 +53,7 @@ catkin_package(
         roscpp
         std_msgs
         message_runtime
+        interface_rs485
 )
 
 

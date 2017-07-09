@@ -27,6 +27,7 @@
 #define PROVIDER_ACTUATORS_PROVIDER_ACTUATOR_NODE_H_
 
 #include <ros/node_handle.h>
+#include <interface_rs485/SendRS485Msg.h>
 
 namespace provider_actuators {
 
@@ -50,6 +51,11 @@ class ProviderActuatorsNode {
 private:
 
     const ros::NodeHandlePtr nh;
+
+    ros::Publisher rs485_publisherRx;
+    ros::Subscriber rs485_subscriberTx;
+
+    void CommunicationDataCallback(const interface_rs485::SendRS485Msg::ConstPtr &receivedData);
 
 };
 
