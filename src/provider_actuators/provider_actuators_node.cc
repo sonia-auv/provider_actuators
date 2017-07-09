@@ -65,6 +65,52 @@ namespace provider_actuators {
     void ProviderActuatorsNode::CommunicationDataCallback(const interface_rs485::SendRS485Msg::ConstPtr &receivedData) {
 
 
+        if (receivedData->slave == interface_rs485::SendRS485Msg::SLAVE_IO_CTR)
+        {
+
+            switch (receivedData->cmd)
+            {
+
+                case interface_rs485::SendRS485Msg::CMD_IO_TEMP:
+                    HandleTempCallback(receivedData->data);
+                    break;
+
+                case interface_rs485::SendRS485Msg::CMD_IO_DROPPER_PORT:
+                case interface_rs485::SendRS485Msg::CMD_IO_DROPPER_STARBOARD:
+                    HandleDroppersCallback(receivedData->data);
+                    break;
+
+                case interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_PORT:
+                case interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD:
+                    HandleTorpedosCallback(receivedData->data);
+                    break;
+
+                case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_BACK:
+                case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_FRONT:
+                case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_RIGHT:
+                case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_LEFT:
+                    HandleLeakSensorsCallback(receivedData->data);
+                    break;
+
+            }
+
+        }
+
+    }
+
+    void ProviderActuatorsNode::HandleTempCallback(interface_rs485::SendRS485Msg::_data_type data) {
+
+    }
+
+    void ProviderActuatorsNode::HandleDroppersCallback(interface_rs485::SendRS485Msg::_data_type data) {
+
+    }
+
+    void ProviderActuatorsNode::HandleTorpedosCallback(interface_rs485::SendRS485Msg::_data_type data) {
+
+    }
+
+    void ProviderActuatorsNode::HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_data_type data) {
 
     }
 
