@@ -41,12 +41,15 @@ namespace provider_actuators {
         rs485_subscriberTx =
                 nh->subscribe("/interface_rs485/dataTx", 100, &ProviderActuatorsNode::CommunicationDataCallback, this);
 
+        doActionSubscriber = nh->subscribe("/provider_actuators/do_action", 100, &ProviderActuatorsNode::DoActionCallback, this);
 
     }
 
     //------------------------------------------------------------------------------
     //
-    ProviderActuatorsNode::~ProviderActuatorsNode() {}
+    ProviderActuatorsNode::~ProviderActuatorsNode() {
+        rs485_subscriberTx.shutdown();
+    }
 
     //==============================================================================
     // M E T H O D   S E C T I O N
@@ -180,6 +183,39 @@ namespace provider_actuators {
         ROS_INFO("Leak on %s", side.data());
 
         // TODO Send msg
+
+    }
+
+    void ProviderActuatorsNode::DoActionCallback(const DoAction::ConstPtr &receivedData) {
+
+        interface_rs485::SendRS485Msg rs485Msg;
+
+        rs485Msg.slave = interface_rs485::SendRS485Msg::SLAVE_IO_CTR;
+
+        if (receivedData->element == DoAction::ELEMENT_DROPPER
+            && receivedData->side == DoAction::SIDE_PORT)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_DROPPER_PORT;
+        }
+        else if (receivedData->element == DoAction::ELEMENT_DROPPER
+                 && receivedData->side == DoAction::SIDE_STARBOARD)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_DROPPER_STARBOARD;
+        }
+        else if (receivedData->element == DoAction::ELEMENT_TORPEDO
+                 && receivedData->side == DoAction::SIDE_PORT)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_PORT;
+        }
+        else if (receivedData->element == DoAction::ELEMENT_TORPEDO
+                 && receivedData->side == DoAction::SIDE_STARBOARD)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD;
+        }
+
+        rs485Msg.data.push_back(receivedData->action);
+
+        rs485_publisherRx.publish(rs485Msg);
 
     }
 
