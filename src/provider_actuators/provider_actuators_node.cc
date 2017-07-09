@@ -89,7 +89,7 @@ namespace provider_actuators {
                 case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_FRONT:
                 case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_RIGHT:
                 case interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_LEFT:
-                    HandleLeakSensorsCallback(receivedData->data);
+                    HandleLeakSensorsCallback(receivedData->cmd);
                     break;
 
             }
@@ -127,7 +127,28 @@ namespace provider_actuators {
 
     }
 
-    void ProviderActuatorsNode::HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd) {
+
+        std::string side;
+
+        if (cmd == interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_FRONT)
+        {
+            side = "front";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_LEFT)
+        {
+            side = "left";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_RIGHT)
+        {
+            side = "right";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_LEAK_SENSOR_BACK)
+        {
+            side = "back";
+        }
+
+        ROS_INFO("Leak on %s", side.data());
 
     }
 

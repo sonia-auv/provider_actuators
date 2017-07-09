@@ -59,7 +59,7 @@ private:
     void HandleTempCallback(interface_rs485::SendRS485Msg::_data_type data);
     void HandleDroppersCallback(interface_rs485::SendRS485Msg::_data_type data);
     void HandleTorpedosCallback(interface_rs485::SendRS485Msg::_data_type data);
-    void HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_data_type data);
+    void HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd);
 
 
 
