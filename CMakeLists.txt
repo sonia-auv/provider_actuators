@@ -45,7 +45,7 @@ add_message_files(DIRECTORY msg
         DoAction.msg
         )
 
-#add_service_files(DIRECTORY srv FILES )
+add_service_files(DIRECTORY srv FILES DoActionSrv.srv)
 
 generate_messages()
 
