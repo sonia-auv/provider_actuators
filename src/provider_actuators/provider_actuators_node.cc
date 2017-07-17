@@ -224,7 +224,7 @@ namespace provider_actuators {
     bool ProviderActuatorsNode::DoActionSrvCallback(DoActionSrv::Request &request,
                                                     DoActionSrv::Response &response) {
 
-        DoAction::Ptr msg;
+        DoAction::Ptr msg(new DoAction());
         msg->action = request.action;
         msg->element = request.element;
         msg->side = request.side;
