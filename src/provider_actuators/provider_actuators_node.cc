@@ -43,6 +43,8 @@ namespace provider_actuators {
 
         doActionSubscriber = nh->subscribe("/provider_actuators/do_action", 100, &ProviderActuatorsNode::DoActionCallback, this);
 
+        doActionService = nh->advertiseService("/provider_actuators/do_action_srv", &ProviderActuatorsNode::DoActionSrvCallback, this);
+
     }
 
     //------------------------------------------------------------------------------
@@ -219,5 +221,17 @@ namespace provider_actuators {
 
     }
 
+    bool ProviderActuatorsNode::DoActionSrvCallback(DoActionSrv::Request &request,
+                                                    DoActionSrv::Response &response) {
+
+        DoAction::ConstPtr msg;
+        msg->action = request.action;
+        msg->element = request.element;
+        msg->side = request.side;
+
+        DoActionCallback(msg);
+
+        return true;
+    }
 
 }  // namespace provider_actuators

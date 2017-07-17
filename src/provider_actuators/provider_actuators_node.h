@@ -29,6 +29,7 @@
 #include <ros/node_handle.h>
 #include <interface_rs485/SendRS485Msg.h>
 #include <provider_actuators/DoAction.h>
+#include <provider_actuators/DoActionSrv.h>
 
 namespace provider_actuators {
 
@@ -57,6 +58,7 @@ private:
     ros::Subscriber rs485_subscriberTx;
 
     ros::Subscriber doActionSubscriber;
+    ros::ServiceServer doActionService;
 
     void CommunicationDataCallback(const interface_rs485::SendRS485Msg::ConstPtr &receivedData);
     void HandleTempCallback(interface_rs485::SendRS485Msg::_data_type data);
@@ -65,7 +67,7 @@ private:
     void HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd);
 
     void DoActionCallback(const DoAction::ConstPtr &receivedData);
-
+    bool DoActionSrvCallback(DoActionSrv::Request &request, DoActionSrv::Response &response);
 
 };
 
