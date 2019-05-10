@@ -99,7 +99,7 @@ namespace provider_actuators {
 
                 case interface_rs485::SendRS485Msg::CMD_IO_ARM_OPEN:
                 case interface_rs485::SendRS485Msg::CMD_IO_ARM_CLOSE:
-                    HandleArmCallback(receivedData->cmd);
+                    HandleArmCallback(receivedData->cmd, receivedData->data);
                     break;
 
             }
