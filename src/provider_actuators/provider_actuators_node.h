@@ -65,6 +65,7 @@ private:
     void HandleDroppersCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
     void HandleTorpedosCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
     void HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd);
+    void HandleArmCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
 
     void DoActionCallback(const DoAction::ConstPtr &receivedData);
     bool DoActionSrvCallback(DoActionSrv::Request &request, DoActionSrv::Response &response);

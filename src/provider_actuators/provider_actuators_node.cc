@@ -97,6 +97,11 @@ namespace provider_actuators {
                     HandleLeakSensorsCallback(receivedData->cmd);
                     break;
 
+                case interface_rs485::SendRS485Msg::CMD_IO_ARM_OPEN:
+                case interface_rs485::SendRS485Msg::CMD_IO_ARM_CLOSE:
+                    HandleArmCallback(receivedData->cmd, receivedData->data);
+                    break;
+
             }
 
         }
@@ -188,6 +193,23 @@ namespace provider_actuators {
 
     }
 
+    void ProviderActuatorsNode::HandleArmCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data) {
+
+        std::string side;
+
+        if (cmd == interface_rs485::SendRS485Msg::CMD_IO_ARM_OPEN)
+        {
+            side = "open";
+        }
+        else if (cmd == interface_rs485::SendRS485Msg::CMD_IO_ARM_CLOSE)
+        {
+            side = "close";
+        }
+
+        ROS_INFO("ARM %s : %d", side.data(), data[0]);
+        // TODO send msg
+    }
+
     void ProviderActuatorsNode::DoActionCallback(const DoAction::ConstPtr &receivedData) {
 
         interface_rs485::SendRS485Msg rs485Msg;
@@ -213,6 +235,18 @@ namespace provider_actuators {
                  && receivedData->side == DoAction::SIDE_STARBOARD)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD;
+        }
+
+        else if (receivedData->element == DoAction::ELEMENT_ARM
+                 && receivedData->side == DoAction::ARM_OPEN)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_ARM_OPEN;
+        }
+
+        else if (receivedData->element == DoAction::ELEMENT_ARM
+                 && receivedData->side == DoAction::ARM_CLOSE)
+        {
+            rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_ARM_CLOSE;
         }
 
         rs485Msg.data.push_back(receivedData->action);
