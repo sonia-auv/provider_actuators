@@ -31,8 +31,6 @@ find_package(
         roscpp
         cmake_modules
         std_msgs
-        message_generation
-        message_runtime
         interface_rs485
         sonia_msgs
 )
@@ -44,7 +42,6 @@ catkin_package(
         CATKIN_DEPENDS
         roscpp
         std_msgs
-        message_runtime
         interface_rs485
         sonia_msgs
 )
