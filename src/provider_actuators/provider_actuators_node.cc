@@ -210,41 +210,41 @@ namespace provider_actuators {
         // TODO send msg
     }
 
-    void ProviderActuatorsNode::DoActionCallback(const DoAction::ConstPtr &receivedData) {
+    void ProviderActuatorsNode::DoActionCallback(const sonia_msgs::ActuatorDoAction::ConstPtr &receivedData) {
 
         interface_rs485::SendRS485Msg rs485Msg;
 
         rs485Msg.slave = interface_rs485::SendRS485Msg::SLAVE_IO_CTR;
 
-        if (receivedData->element == DoAction::ELEMENT_DROPPER
-            && receivedData->side == DoAction::SIDE_PORT)
+        if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_DROPPER
+            && receivedData->side == sonia_msgs::ActuatorDoAction::SIDE_PORT)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_DROPPER_PORT;
         }
-        else if (receivedData->element == DoAction::ELEMENT_DROPPER
-                 && receivedData->side == DoAction::SIDE_STARBOARD)
+        else if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_DROPPER
+                 && receivedData->side == sonia_msgs::ActuatorDoAction::SIDE_STARBOARD)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_DROPPER_STARBOARD;
         }
-        else if (receivedData->element == DoAction::ELEMENT_TORPEDO
-                 && receivedData->side == DoAction::SIDE_PORT)
+        else if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_TORPEDO
+                 && receivedData->side == sonia_msgs::ActuatorDoAction::SIDE_PORT)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_PORT;
         }
-        else if (receivedData->element == DoAction::ELEMENT_TORPEDO
-                 && receivedData->side == DoAction::SIDE_STARBOARD)
+        else if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_TORPEDO
+                 && receivedData->side == sonia_msgs::ActuatorDoAction::SIDE_STARBOARD)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD;
         }
 
-        else if (receivedData->element == DoAction::ELEMENT_ARM
-                 && receivedData->side == DoAction::ARM_OPEN)
+        else if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_ARM
+                 && receivedData->side == sonia_msgs::ActuatorDoAction::ARM_OPEN)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_ARM_OPEN;
         }
 
-        else if (receivedData->element == DoAction::ELEMENT_ARM
-                 && receivedData->side == DoAction::ARM_CLOSE)
+        else if (receivedData->element == sonia_msgs::ActuatorDoAction::ELEMENT_ARM
+                 && receivedData->side == sonia_msgs::ActuatorDoAction::ARM_CLOSE)
         {
             rs485Msg.cmd = interface_rs485::SendRS485Msg::CMD_IO_ARM_CLOSE;
         }
@@ -255,10 +255,10 @@ namespace provider_actuators {
 
     }
 
-    bool ProviderActuatorsNode::DoActionSrvCallback(DoActionSrv::Request &request,
-                                                    DoActionSrv::Response &response) {
+    bool ProviderActuatorsNode::DoActionSrvCallback(sonia_msgs::ActuatorDoActionSrv::Request &request,
+                                                    sonia_msgs::ActuatorDoActionSrv::Response &response) {
 
-        DoAction::Ptr msg(new DoAction());
+        sonia_msgs::ActuatorDoAction::Ptr msg(new sonia_msgs::ActuatorDoAction());
         msg->action = request.action;
         msg->element = request.element;
         msg->side = request.side;
