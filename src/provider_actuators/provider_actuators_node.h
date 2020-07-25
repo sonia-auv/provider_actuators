@@ -27,9 +27,9 @@
 #define PROVIDER_ACTUATORS_PROVIDER_ACTUATOR_NODE_H_
 
 #include <ros/node_handle.h>
-#include <interface_rs485/SendRS485Msg.h>
-#include <provider_actuators/DoAction.h>
-#include <provider_actuators/DoActionSrv.h>
+#include <sonia_msgs/SendRS485Msg.h>
+#include <sonia_msgs/ActuatorDoAction.h>
+#include <sonia_msgs/ActuatorDoActionSrv.h>
 
 namespace provider_actuators {
 
@@ -60,15 +60,15 @@ private:
     ros::Subscriber doActionSubscriber;
     ros::ServiceServer doActionService;
 
-    void CommunicationDataCallback(const interface_rs485::SendRS485Msg::ConstPtr &receivedData);
-    void HandleTempCallback(interface_rs485::SendRS485Msg::_data_type data);
-    void HandleDroppersCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
-    void HandleTorpedosCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
-    void HandleLeakSensorsCallback(interface_rs485::SendRS485Msg::_cmd_type cmd);
-    void HandleArmCallback(interface_rs485::SendRS485Msg::_cmd_type cmd, interface_rs485::SendRS485Msg::_data_type data);
+    void CommunicationDataCallback(const sonia_msgs::SendRS485Msg::ConstPtr &receivedData);
+    void HandleTempCallback(sonia_msgs::SendRS485Msg::_data_type data);
+    void HandleDroppersCallback(sonia_msgs::SendRS485Msg::_cmd_type cmd, sonia_msgs::SendRS485Msg::_data_type data);
+    void HandleTorpedosCallback(sonia_msgs::SendRS485Msg::_cmd_type cmd, sonia_msgs::SendRS485Msg::_data_type data);
+    void HandleLeakSensorsCallback(sonia_msgs::SendRS485Msg::_cmd_type cmd);
+    void HandleArmCallback(sonia_msgs::SendRS485Msg::_cmd_type cmd, sonia_msgs::SendRS485Msg::_data_type data);
 
-    void DoActionCallback(const DoAction::ConstPtr &receivedData);
-    bool DoActionSrvCallback(DoActionSrv::Request &request, DoActionSrv::Response &response);
+    void DoActionCallback(const sonia_msgs::ActuatorDoAction::ConstPtr &receivedData);
+    bool DoActionSrvCallback(sonia_msgs::ActuatorDoActionSrv::Request &request, sonia_msgs::ActuatorDoActionSrv::Response &response);
 
 };
 
