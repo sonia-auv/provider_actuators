@@ -8,10 +8,7 @@
             "name": "ROS: Launch",
             "type": "ros",
             "request": "launch",
-            "preLaunchTask": {
-                "task": "build",
-                "type": "catkin_make"
-            },
+            "preLaunchTask": "build",
             "target": "/home/sonia/ros_sonia_ws/src/provider_actuators/launch/provider_actuators.launch",
         }
     ]
