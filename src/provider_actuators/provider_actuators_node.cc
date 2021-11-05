@@ -75,44 +75,21 @@ namespace provider_actuators {
             switch (receivedData->cmd)
             {
                 case sonia_common::SendRS485Msg::CMD_IO_DROPPER_ACTION:
-                    HandleDroppersCallback(receivedData->cmd, receivedData->data);
+                    HandleDroppersCallback(receivedData->data);
                     break;
 
                 case sonia_common::SendRS485Msg::CMD_IO_TORPEDO_ACTION:
-                    HandleTorpedosCallback(receivedData->cmd, receivedData->data);
+                    HandleTorpedosCallback(receivedData->data);
                     break;
 
                 case sonia_common::SendRS485Msg::CMD_IO_ARM_ACTION:
-                    HandleArmCallback(receivedData->cmd, receivedData->data);
+                    HandleArmCallback(receivedData->data);
                     break;
             }
         }
     }
 
-    void ProviderActuatorsNode::HandleTempCallback(sonia_common::SendRS485Msg::_data_type data) {
-
-        union Temperature
-        {
-            unsigned char bytes[4];
-            float temperature;
-        };
-
-        Temperature temperatureTransfert;
-
-        temperatureTransfert.bytes[0] = data[0];
-        temperatureTransfert.bytes[1] = data[1];
-        temperatureTransfert.bytes[2] = data[2];
-        temperatureTransfert.bytes[3] = data[3];
-
-        float temperature = temperatureTransfert.temperature;
-
-        // TODO Send msg
-
-        ROS_INFO("Board IO temperature : %f", temperature);
-
-    }
-
-    void ProviderActuatorsNode::HandleDroppersCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data) {
 
         std::string side;
 
@@ -125,12 +102,12 @@ namespace provider_actuators {
             side = "starboard";
         }
 
-        ROS_INFO("Dropper %s : %d", side.data(), data[0]);
+        ROS_INFO("Dropper %s activated", side.data());
         // TODO send msg
 
     }
 
-    void ProviderActuatorsNode::HandleTorpedosCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data) {
 
         std::string side;
 
@@ -143,11 +120,11 @@ namespace provider_actuators {
             side = "starboard";
         }
 
-        ROS_INFO("Torpedo %s : %d", side.data(), data[0]);
+        ROS_INFO("Torpedo %s activated", side.data());
         // TODO send msg
     }
 
-    void ProviderActuatorsNode::HandleArmCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data) {
+    void ProviderActuatorsNode::HandleArmCallback(sonia_common::SendRS485Msg::_data_type data) {
 
         std::string side;
 
@@ -160,7 +137,7 @@ namespace provider_actuators {
             side = "close";
         }
 
-        ROS_INFO("ARM %s : %d", side.data(), data[0]);
+        ROS_INFO("ARM %s", side.data());
         // TODO send msg
     }
 

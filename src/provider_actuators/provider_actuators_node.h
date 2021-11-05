@@ -57,10 +57,9 @@ private:
     ros::ServiceServer doActionService;
 
     void CommunicationDataCallback(const sonia_common::SendRS485Msg::ConstPtr &receivedData);
-    void HandleTempCallback(sonia_common::SendRS485Msg::_data_type data);
-    void HandleDroppersCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
-    void HandleTorpedosCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
-    void HandleArmCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
+    void HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data);
+    void HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data);
+    void HandleArmCallback(sonia_common::SendRS485Msg::_data_type data);
 
     void DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData);
     bool DoActionSrvCallback(sonia_common::ActuatorDoActionSrv::Request &request, sonia_common::ActuatorDoActionSrv::Response &response);
