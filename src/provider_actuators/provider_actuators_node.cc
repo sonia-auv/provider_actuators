@@ -147,42 +147,15 @@ namespace provider_actuators {
         // TODO send msg
     }
 
-    void ProviderActuatorsNode::HandleLeakSensorsCallback(sonia_common::SendRS485Msg::_cmd_type cmd) {
-
-        std::string side;
-
-        // if (cmd == sonia_common::SendRS485Msg::CMD_IO_LEAK_SENSOR_FRONT)
-        // {
-        //     side = "front";
-        // }
-        // else if (cmd == sonia_common::SendRS485Msg::CMD_IO_LEAK_SENSOR_LEFT)
-        // {
-        //     side = "left";
-        // }
-        // else if (cmd == sonia_common::SendRS485Msg::CMD_IO_LEAK_SENSOR_RIGHT)
-        // {
-        //     side = "right";
-        // }
-        // else if (cmd == sonia_common::SendRS485Msg::CMD_IO_LEAK_SENSOR_BACK)
-        // {
-        //     side = "back";
-        // }
-
-        ROS_INFO("Leak on %s", side.data());
-
-        // TODO Send msg
-
-    }
-
     void ProviderActuatorsNode::HandleArmCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data) {
 
         std::string side;
 
-        if (cmd == sonia_common::SendRS485Msg::CMD_IO_ARM_OPEN)
+        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_OPEN)
         {
             side = "open";
         }
-        else if (cmd == sonia_common::SendRS485Msg::CMD_IO_ARM_CLOSE)
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_CLOSE)
         {
             side = "close";
         }
@@ -209,33 +182,32 @@ namespace provider_actuators {
             rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_DROPPER_ACTION;
             rs485Msg.data.push_back(sonia_common::SendRS485Msg::DATA_IO_DROPPER_STARBOARD);
         }
-        // else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_TORPEDO
-        //          && receivedData->side == sonia_common::ActuatorDoAction::SIDE_PORT)
-        // {
-        //     rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_TORPEDO_PORT;
-        // }
-        // else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_TORPEDO
-        //          && receivedData->side == sonia_common::ActuatorDoAction::SIDE_STARBOARD)
-        // {
-        //     rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_TORPEDO_STARBOARD;
-        // }
-
-        // else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_ARM
-        //          && receivedData->side == sonia_common::ActuatorDoAction::ARM_OPEN)
-        // {
-        //     rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_ARM_OPEN;
-        // }
-
-        // else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_ARM
-        //          && receivedData->side == sonia_common::ActuatorDoAction::ARM_CLOSE)
-        // {
-        //     rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_ARM_CLOSE;
-        // }
-
-        // rs485Msg.data.push_back(receivedData->action);
+        else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_TORPEDO
+                 && receivedData->side == sonia_common::ActuatorDoAction::SIDE_PORT)
+        {
+            rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_TORPEDO_ACTION;
+            rs485Msg.data.push_back(sonia_common::SendRS485Msg::DATA_IO_TORPEDO_PORT);
+        }
+        else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_TORPEDO
+                 && receivedData->side == sonia_common::ActuatorDoAction::SIDE_STARBOARD)
+        {
+            rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_TORPEDO_ACTION;
+            rs485Msg.data.push_back(sonia_common::SendRS485Msg::DATA_IO_TORPEDO_STARBOARD);
+        }
+        else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_ARM
+                 && receivedData->side == sonia_common::ActuatorDoAction::ARM_OPEN)
+        {
+            rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_ARM_ACTION;
+            rs485Msg.data.push_back(sonia_common::SendRS485Msg::DATA_IO_ARM_OPEN);
+        }
+        else if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_ARM
+                 && receivedData->side == sonia_common::ActuatorDoAction::ARM_CLOSE)
+        {
+            rs485Msg.cmd = sonia_common::SendRS485Msg::CMD_IO_ARM_ACTION;
+            rs485Msg.data.push_back(sonia_common::SendRS485Msg::DATA_IO_ARM_CLOSE);
+        }
 
         rs485_publisherRx.publish(rs485Msg);
-
     }
 
     bool ProviderActuatorsNode::DoActionSrvCallback(sonia_common::ActuatorDoActionSrv::Request &request,

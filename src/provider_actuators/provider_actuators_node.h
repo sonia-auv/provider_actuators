@@ -60,7 +60,6 @@ private:
     void HandleTempCallback(sonia_common::SendRS485Msg::_data_type data);
     void HandleDroppersCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
     void HandleTorpedosCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
-    void HandleLeakSensorsCallback(sonia_common::SendRS485Msg::_cmd_type cmd);
     void HandleArmCallback(sonia_common::SendRS485Msg::_cmd_type cmd, sonia_common::SendRS485Msg::_data_type data);
 
     void DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData);
