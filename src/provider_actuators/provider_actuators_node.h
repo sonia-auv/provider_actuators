@@ -42,12 +42,8 @@ class ProviderActuatorsNode {
   // P U B L I C   C / D T O R S
 
   explicit ProviderActuatorsNode(const ros::NodeHandlePtr &nh);
-
   ~ProviderActuatorsNode();
 
-  /// Taking care of the spinning of the ROS thread.
-  /// Each iteration of the loop, this will take the objects in the object
-  /// registery, empty it and publish the objects.
   void Spin();
 
 private:
