@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>provider_actuators</name>
-  <version>1.1.1</version>
+  <version>1.2.1</version>
   <description>
     The provider_actuators is responsible to communicate with IO board.
   </description>
@@ -9,7 +9,7 @@
 
   <author>Marc-Antoine Couture</author>
 
-  <maintainer email="coumarc9@outlook.com">Marc-Antoine Couture</maintainer>
+  <maintainer email="francisalonzo29@gmail.com">Francis Alonzo</maintainer>
 
   <license>GPLv3</license>
 
