@@ -25,6 +25,10 @@
 
 #include "provider_actuators/provider_actuators_node.h"
 
+bool droppersActivated = false;
+bool torpedoesActivated = false;
+bool armActivated = false;
+
 namespace provider_actuators {
 
     //==============================================================================
@@ -103,8 +107,8 @@ namespace provider_actuators {
         }
 
         ROS_INFO("Dropper %s activated", side.data());
-        // TODO send msg
-
+        
+        droppersActivated = true;
     }
 
     void ProviderActuatorsNode::HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data) {
@@ -121,7 +125,8 @@ namespace provider_actuators {
         }
 
         ROS_INFO("Torpedo %s activated", side.data());
-        // TODO send msg
+        
+        torpedoesActivated = true;
     }
 
     void ProviderActuatorsNode::HandleArmCallback(sonia_common::SendRS485Msg::_data_type data) {
@@ -138,7 +143,8 @@ namespace provider_actuators {
         }
 
         ROS_INFO("ARM %s", side.data());
-        // TODO send msg
+        
+        armActivated = true;
     }
 
     void ProviderActuatorsNode::DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData) {
@@ -189,6 +195,10 @@ namespace provider_actuators {
 
     bool ProviderActuatorsNode::DoActionSrvCallback(sonia_common::ActuatorDoActionSrv::Request &request,
                                                     sonia_common::ActuatorDoActionSrv::Response &response) {
+        
+        torpedoesActivated = false;
+        droppersActivated = false;
+        armActivated = false;
 
         sonia_common::ActuatorDoAction::Ptr msg(new sonia_common::ActuatorDoAction());
         msg->action = request.action;
@@ -197,7 +207,42 @@ namespace provider_actuators {
 
         DoActionCallback(msg);
 
-        return true;
+        int timeout = 120; //Timeout value in seconds, can be edited to fit needs
+        switch (request.element){
+            case sonia_common::ActuatorDoAction::ELEMENT_DROPPER:
+                while (!droppersActivated){
+                    if (timeout > 0){
+                        sleep(1);
+                        timeout -= 1;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                return true;
+            case sonia_common::ActuatorDoAction::ELEMENT_TORPEDO:
+                while (!torpedoesActivated){
+                    if (timeout > 0){
+                        sleep(1);
+                        timeout -= 1;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                return true;
+            case sonia_common::ActuatorDoAction::ELEMENT_ARM:
+                while (!armActivated){
+                    if (timeout > 0){
+                        sleep(1);
+                        timeout -= 1;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                return true;
+        }
     }
 
 }  // namespace provider_actuators
