@@ -23,12 +23,7 @@
  * along with S.O.N.I.A. software. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef _WIN32
-#include <windows.h>
-#else
 #include <unistd.h>
-#endif
-
 #include "provider_actuators/provider_actuators_node.h"
 
 bool droppersActivated = false;
