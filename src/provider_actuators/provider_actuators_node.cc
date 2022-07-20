@@ -208,7 +208,7 @@ namespace provider_actuators {
 
         DoActionCallback(msg);
 
-        int timeout = 120; //Timeout value in seconds, can be edited to fit needs
+        int timeout = 5; //Timeout value in seconds, can be edited to fit needs
         switch (request.element){
             case sonia_common::ActuatorDoAction::ELEMENT_DROPPER:
                 while (!droppersActivated){
@@ -243,6 +243,8 @@ namespace provider_actuators {
                     }
                 }
                 return true;
+            default:
+                return false;
         }
     }
 
