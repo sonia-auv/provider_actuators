@@ -217,9 +217,11 @@ namespace provider_actuators {
                         timeout -= 1;
                     }
                     else{
-                        return false;
+                        response.success = false;
+                        return true;
                     }
                 }
+                response.success = true;
                 return true;
             case sonia_common::ActuatorDoAction::ELEMENT_TORPEDO:
                 while (!torpedoesActivated){
@@ -228,9 +230,11 @@ namespace provider_actuators {
                         timeout -= 1;
                     }
                     else{
-                        return false;
+                        response.success = false;
+                        return true;
                     }
                 }
+                response.success = true;
                 return true;
             case sonia_common::ActuatorDoAction::ELEMENT_ARM:
                 while (!armActivated){
@@ -239,9 +243,11 @@ namespace provider_actuators {
                         timeout -= 1;
                     }
                     else{
-                        return false;
+                        response.success = false;
+                        return true;
                     }
                 }
+                response.success = true;
                 return true;
             default:
                 return false;
