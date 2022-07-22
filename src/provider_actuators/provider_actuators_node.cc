@@ -106,7 +106,7 @@ namespace provider_actuators {
         {
             side = "starboard";
         }
-
+        ROS_INFO("test");
         ROS_INFO("Dropper %s activated", side.data());
         
         droppersActivated = true;
