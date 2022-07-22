@@ -216,7 +216,7 @@ namespace provider_actuators {
                 while (!droppersActivated){
                     ROS_ERROR("%f", timeout);
                     if (timeout > 0){
-                        sleep(0.1);
+                        ros::Duration(0.1).sleep();
                         ROS_ERROR("%s", droppersActivated?"out of function true":"out of function false");
                         timeout -= 0.1;
                     }
