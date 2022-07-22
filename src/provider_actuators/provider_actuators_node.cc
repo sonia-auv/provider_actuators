@@ -95,7 +95,7 @@ namespace provider_actuators {
     }
 
     void ProviderActuatorsNode::HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data) {
-
+        ROS_ERROR("test1");
         std::string side;
 
         if (data[0] == sonia_common::SendRS485Msg::DATA_IO_DROPPER_PORT)
@@ -106,10 +106,12 @@ namespace provider_actuators {
         {
             side = "starboard";
         }
-        ROS_INFO("test");
-        ROS_INFO("Dropper %s activated", side.data());
-        
+        ROS_ERROR("test2");
+        ROS_ERROR("%s", droppersActivated?"in function true":"in function false");
+        ROS_ERROR("Dropper %s activated", side.data());
+        ROS_ERROR("test3");
         droppersActivated = true;
+        ROS_ERROR("%s", droppersActivated?"in function true":"in function false");
     }
 
     void ProviderActuatorsNode::HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data) {
@@ -208,13 +210,15 @@ namespace provider_actuators {
 
         DoActionCallback(msg);
 
-        int timeout = 5; //Timeout value in seconds, can be edited to fit needs
+        float timeout = 5; //Timeout value in seconds, can be edited to fit needs
         switch (request.element){
             case sonia_common::ActuatorDoAction::ELEMENT_DROPPER:
                 while (!droppersActivated){
+                    ROS_ERROR("test");
                     if (timeout > 0){
-                        sleep(1);
-                        timeout -= 1;
+                        sleep(0.1);
+                        ROS_ERROR("%s", droppersActivated?"out of function true":"out of function false");
+                        timeout -= 0.1;
                     }
                     else{
                         response.success = false;
