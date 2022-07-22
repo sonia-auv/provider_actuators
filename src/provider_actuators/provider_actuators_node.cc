@@ -214,17 +214,19 @@ namespace provider_actuators {
         switch (request.element){
             case sonia_common::ActuatorDoAction::ELEMENT_DROPPER:
                 while (!droppersActivated){
-                    ROS_ERROR("test");
+                    ROS_ERROR("%f", timeout);
                     if (timeout > 0){
                         sleep(0.1);
                         ROS_ERROR("%s", droppersActivated?"out of function true":"out of function false");
                         timeout -= 0.1;
                     }
                     else{
+                        ROS_ERROR("TIMED OUT!!!");
                         response.success = false;
                         return true;
                     }
                 }
+                ROS_ERROR("WOKRING!!!");
                 response.success = true;
                 return true;
             case sonia_common::ActuatorDoAction::ELEMENT_TORPEDO:
