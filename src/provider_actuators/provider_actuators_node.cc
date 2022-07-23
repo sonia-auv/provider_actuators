@@ -63,9 +63,10 @@ namespace provider_actuators {
 
         while (ros::ok()) 
         {
-            for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+            for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end();){
                 if(i->timeout > 1){
                     i->timeout -= 1;
+                    i++;
                 }
                 else{
                     sonia_common::ActuatorSendReply reply;
@@ -73,7 +74,7 @@ namespace provider_actuators {
                     reply.side = i->side;
                     reply.response = sonia_common::ActuatorSendReply::RESPONSE_TIMED_OUT;
                     doActionPublisher.publish(reply);
-                    timeouts.erase(i);
+                    i = timeouts.erase(i);
                 }
             }
             ros::spinOnce();
@@ -148,27 +149,31 @@ namespace provider_actuators {
     }
 
     void ProviderActuatorsNode::SendActionPublisherSuccess(uint8_t element, uint8_t side){
-        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); ){
             if(i->element == element && i->side == side){
                 sonia_common::ActuatorSendReply reply;
                 reply.element = element;
                 reply.side = side;
                 reply.response = sonia_common::ActuatorSendReply::RESPONSE_SUCCESS;
                 doActionPublisher.publish(reply);
-                timeouts.erase(i);
+                i = timeouts.erase(i);
+            } else {
+                i++;
             }
         }
     }
 
     void ProviderActuatorsNode::SendActionPublisherFailure(uint8_t element){
-        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); ){
             if(i->element == element){
                 sonia_common::ActuatorSendReply reply;
                 reply.element = element;
                 reply.side = i->side;
                 reply.response = sonia_common::ActuatorSendReply::RESPONSE_FAILURE;
                 doActionPublisher.publish(reply);
-                timeouts.erase(i);
+                i = timeouts.erase(i);
+            } else {
+                i++;
             }
         }
     }
