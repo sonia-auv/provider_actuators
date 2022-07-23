@@ -177,14 +177,15 @@ namespace provider_actuators {
         
         for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
             if(i->element == receivedData->element && i->side == receivedData->side){
-                break;
+                return;
             }
-            storedInfo temp;
-            temp.element = receivedData->element;
-            temp.side = receivedData->side;
-            temp.timeout = 5; 
-            timeouts.push_back(temp);
         }
+
+        storedInfo temp;
+        temp.element = receivedData->element;
+        temp.side = receivedData->side;
+        temp.timeout = 5; 
+        timeouts.push_back(temp);
 
         sonia_common::SendRS485Msg rs485Msg;
         rs485Msg.slave = sonia_common::SendRS485Msg::SLAVE_IO;
