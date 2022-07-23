@@ -35,15 +35,13 @@ namespace provider_actuators {
         : nh(nh)
     {
 
-        rs485_publisherRx =
-                nh->advertise<sonia_common::SendRS485Msg>("/interface_rs485/dataRx", 100);
-
-        rs485_subscriberTx =
-                nh->subscribe("/interface_rs485/dataTx", 100, &ProviderActuatorsNode::CommunicationDataCallback, this);
+        rs485_publisherRx = nh->advertise<sonia_common::SendRS485Msg>("/interface_rs485/dataRx", 100);
+        rs485_subscriberTx = nh->subscribe("/interface_rs485/dataTx", 100, &ProviderActuatorsNode::CommunicationDataCallback, this);
 
         doActionSubscriber = nh->subscribe("/provider_actuators/do_action_to_actuators", 100, &ProviderActuatorsNode::DoActionCallback, this);
-
         doActionPublisher = nh->advertise<sonia_common::ActuatorSendReply>("/provider_actuators/do_action_from_actuators", 100);
+
+        isAliveService = nh->advertiseService("provider_actuators/isAlive", &ProviderActuatorsNode::IsAlive, this);
     }
 
     //------------------------------------------------------------------------------
@@ -234,4 +232,7 @@ namespace provider_actuators {
 
         rs485_publisherRx.publish(rs485Msg);
     }
-}  // namespace provider_actuators
+
+    // empty service in order to detect if the node is still alive by proc_fault.
+    bool ProviderActuatorsNode::IsAlive(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response) {return true;}
+}

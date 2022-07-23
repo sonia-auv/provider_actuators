@@ -26,7 +26,9 @@
 #ifndef PROVIDER_ACTUATORS_PROVIDER_ACTUATOR_NODE_H_
 #define PROVIDER_ACTUATORS_PROVIDER_ACTUATOR_NODE_H_
 
+#include <ros/ros.h>
 #include <ros/node_handle.h>
+#include <std_srvs/Empty.h>
 #include <sonia_common/SendRS485Msg.h>
 #include <sonia_common/ActuatorDoAction.h>
 #include <sonia_common/ActuatorSendReply.h>
@@ -63,6 +65,8 @@ private:
     ros::Subscriber doActionSubscriber;
     ros::Publisher doActionPublisher;
 
+    ros::ServiceServer isAliveService;
+
     void CommunicationDataCallback(const sonia_common::SendRS485Msg::ConstPtr &receivedData);
     void HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data);
     void HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data);
@@ -70,6 +74,7 @@ private:
     void SendActionPublisherSuccess(uint8_t element, uint8_t side);
     void SendActionPublisherFailure(uint8_t element);
     void DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData);
+    bool IsAlive(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response);
 };
 
 }  // namespace provider_actuators
