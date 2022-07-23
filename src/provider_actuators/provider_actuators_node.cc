@@ -23,12 +23,7 @@
  * along with S.O.N.I.A. software. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
 #include "provider_actuators/provider_actuators_node.h"
-
-bool droppersActivated = false;
-bool torpedoesActivated = false;
-bool armActivated = false;
 
 namespace provider_actuators {
 
@@ -46,16 +41,16 @@ namespace provider_actuators {
         rs485_subscriberTx =
                 nh->subscribe("/interface_rs485/dataTx", 100, &ProviderActuatorsNode::CommunicationDataCallback, this);
 
-        doActionSubscriber = nh->subscribe("/provider_actuators/do_action", 100, &ProviderActuatorsNode::DoActionCallback, this);
+        doActionSubscriber = nh->subscribe("/provider_actuators/do_action_to_actuators", 100, &ProviderActuatorsNode::DoActionCallback, this);
 
-        doActionService = nh->advertiseService("/provider_actuators/do_action_srv", &ProviderActuatorsNode::DoActionSrvCallback, this);
-
+        doActionPublisher = nh->advertise<sonia_common::ActuatorSendReply>("/provider_actuators/do_action_from_actuators", 100);
     }
 
     //------------------------------------------------------------------------------
     //
     ProviderActuatorsNode::~ProviderActuatorsNode() {
         rs485_subscriberTx.shutdown();
+        doActionSubscriber.shutdown();
     }
 
     //==============================================================================
@@ -68,6 +63,19 @@ namespace provider_actuators {
 
         while (ros::ok()) 
         {
+            for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+                if(i->timeout > 1){
+                    i->timeout -= 1;
+                }
+                else{
+                    sonia_common::ActuatorSendReply reply;
+                    reply.element = i->element;
+                    reply.side = i->side;
+                    reply.response = sonia_common::ActuatorSendReply::RESPONSE_TIMED_OUT;
+                    doActionPublisher.publish(reply);
+                    timeouts.erase(i);
+                }
+            }
             ros::spinOnce();
             r.sleep();
         }
@@ -95,65 +103,90 @@ namespace provider_actuators {
     }
 
     void ProviderActuatorsNode::HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data) {
-        ROS_ERROR("test1");
-        std::string side;
-
-        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_DROPPER_PORT)
-        {
-            side = "port";
+        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_DROPPER_PORT){
+            ROS_INFO("Dropper port activated");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_DROPPER, sonia_common::ActuatorSendReply::SIDE_PORT);
         }
-        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_DROPPER_STARBOARD)
-        {
-            side = "starboard";
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_DROPPER_STARBOARD){
+            ROS_INFO("Dropper starboard activated");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_DROPPER, sonia_common::ActuatorSendReply::SIDE_STARBOARD);
         }
-        ROS_ERROR("test2");
-        ROS_ERROR("%s", droppersActivated?"in function true":"in function false");
-        ROS_ERROR("Dropper %s activated", side.data());
-        ROS_ERROR("test3");
-        droppersActivated = true;
-        ROS_ERROR("%s", droppersActivated?"in function true":"in function false");
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_COULD_NOT_COMPLETE){
+            ROS_INFO("Dropper was not activated");
+            SendActionPublisherFailure(sonia_common::ActuatorSendReply::ELEMENT_DROPPER);
+        }
     }
 
     void ProviderActuatorsNode::HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data) {
-
-        std::string side;
-
-        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_TORPEDO_PORT)
-        {
-            side = "port";
+        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_TORPEDO_PORT){
+            ROS_INFO("Torpedo port activated");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_TORPEDO, sonia_common::ActuatorSendReply::SIDE_PORT);
         }
-        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_TORPEDO_STARBOARD)
-        {
-            side = "starboard";
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_TORPEDO_STARBOARD){
+            ROS_INFO("Torpedo starboard activated");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_TORPEDO, sonia_common::ActuatorSendReply::SIDE_STARBOARD);
         }
-
-        ROS_INFO("Torpedo %s activated", side.data());
-        
-        torpedoesActivated = true;
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_COULD_NOT_COMPLETE){
+            ROS_INFO("Torpedo was not activated");
+            SendActionPublisherFailure(sonia_common::ActuatorSendReply::ELEMENT_TORPEDO);
+        }
     }
 
     void ProviderActuatorsNode::HandleArmCallback(sonia_common::SendRS485Msg::_data_type data) {
-
-        std::string side;
-
-        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_OPEN)
-        {
-            side = "open";
+        if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_OPEN){
+            ROS_INFO("Arm Opened");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_ARM, sonia_common::ActuatorSendReply::ARM_OPEN);
         }
-        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_CLOSE)
-        {
-            side = "close";
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_ARM_CLOSE){
+            ROS_INFO("Arm Closed");
+            SendActionPublisherSuccess(sonia_common::ActuatorSendReply::ELEMENT_ARM, sonia_common::ActuatorSendReply::ARM_CLOSE);
         }
+        else if (data[0] == sonia_common::SendRS485Msg::DATA_IO_COULD_NOT_COMPLETE){
+            ROS_INFO("Arm was not activated");
+            SendActionPublisherFailure(sonia_common::ActuatorSendReply::ELEMENT_ARM);
+        }
+    }
 
-        ROS_INFO("ARM %s", side.data());
-        
-        armActivated = true;
+    void ProviderActuatorsNode::SendActionPublisherSuccess(uint8_t element, uint8_t side){
+        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+            if(i->element == element && i->side == side){
+                sonia_common::ActuatorSendReply reply;
+                reply.element = element;
+                reply.side = side;
+                reply.response = sonia_common::ActuatorSendReply::RESPONSE_SUCCESS;
+                doActionPublisher.publish(reply);
+                timeouts.erase(i);
+            }
+        }
+    }
+
+    void ProviderActuatorsNode::SendActionPublisherFailure(uint8_t element){
+        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+            if(i->element == element){
+                sonia_common::ActuatorSendReply reply;
+                reply.element = element;
+                reply.side = i->side;
+                reply.response = sonia_common::ActuatorSendReply::RESPONSE_FAILURE;
+                doActionPublisher.publish(reply);
+                timeouts.erase(i);
+            }
+        }
     }
 
     void ProviderActuatorsNode::DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData) {
+        
+        for(std::vector<storedInfo>::iterator i = timeouts.begin(); i != timeouts.end(); i++){
+            if(i->element == receivedData->element && i->side == receivedData->side){
+                break;
+            }
+            storedInfo temp;
+            temp.element = receivedData->element;
+            temp.side = receivedData->side;
+            temp.timeout = 5; 
+            timeouts.push_back(temp);
+        }
 
         sonia_common::SendRS485Msg rs485Msg;
-
         rs485Msg.slave = sonia_common::SendRS485Msg::SLAVE_IO;
 
         if (receivedData->element == sonia_common::ActuatorDoAction::ELEMENT_DROPPER
@@ -195,69 +228,4 @@ namespace provider_actuators {
 
         rs485_publisherRx.publish(rs485Msg);
     }
-
-    bool ProviderActuatorsNode::DoActionSrvCallback(sonia_common::ActuatorDoActionSrv::Request &request,
-                                                    sonia_common::ActuatorDoActionSrv::Response &response) {
-        
-        torpedoesActivated = false;
-        droppersActivated = false;
-        armActivated = false;
-
-        sonia_common::ActuatorDoAction::Ptr msg(new sonia_common::ActuatorDoAction());
-        msg->action = request.action;
-        msg->element = request.element;
-        msg->side = request.side;
-
-        DoActionCallback(msg);
-
-        float timeout = 5; //Timeout value in seconds, can be edited to fit needs
-        switch (request.element){
-            case sonia_common::ActuatorDoAction::ELEMENT_DROPPER:
-                while (!droppersActivated){
-                    ROS_ERROR("%f", timeout);
-                    if (timeout > 0){
-                        ros::Duration(0.1).sleep();
-                        ROS_ERROR("%s", droppersActivated?"out of function true":"out of function false");
-                        timeout -= 0.1;
-                    }
-                    else{
-                        ROS_ERROR("TIMED OUT!!!");
-                        response.success = false;
-                        return true;
-                    }
-                }
-                ROS_ERROR("WOKRING!!!");
-                response.success = true;
-                return true;
-            case sonia_common::ActuatorDoAction::ELEMENT_TORPEDO:
-                while (!torpedoesActivated){
-                    if (timeout > 0){
-                        sleep(1);
-                        timeout -= 1;
-                    }
-                    else{
-                        response.success = false;
-                        return true;
-                    }
-                }
-                response.success = true;
-                return true;
-            case sonia_common::ActuatorDoAction::ELEMENT_ARM:
-                while (!armActivated){
-                    if (timeout > 0){
-                        sleep(1);
-                        timeout -= 1;
-                    }
-                    else{
-                        response.success = false;
-                        return true;
-                    }
-                }
-                response.success = true;
-                return true;
-            default:
-                return false;
-        }
-    }
-
 }  // namespace provider_actuators
