@@ -29,9 +29,15 @@
 #include <ros/node_handle.h>
 #include <sonia_common/SendRS485Msg.h>
 #include <sonia_common/ActuatorDoAction.h>
-#include <sonia_common/ActuatorDoActionSrv.h>
+#include <sonia_common/ActuatorSendReply.h>
 
 namespace provider_actuators {
+
+struct storedInfo{
+    int element;
+    int side;
+    int timeout;
+};
 
 class ProviderActuatorsNode {
  public:
@@ -47,6 +53,7 @@ class ProviderActuatorsNode {
   void Spin();
 
 private:
+    std::vector<storedInfo> timeouts;
 
     const ros::NodeHandlePtr nh;
 
@@ -54,16 +61,15 @@ private:
     ros::Subscriber rs485_subscriberTx;
 
     ros::Subscriber doActionSubscriber;
-    ros::ServiceServer doActionService;
+    ros::Publisher doActionPublisher;
 
     void CommunicationDataCallback(const sonia_common::SendRS485Msg::ConstPtr &receivedData);
     void HandleDroppersCallback(sonia_common::SendRS485Msg::_data_type data);
     void HandleTorpedosCallback(sonia_common::SendRS485Msg::_data_type data);
     void HandleArmCallback(sonia_common::SendRS485Msg::_data_type data);
-
+    void SendActionPublisherSuccess(uint8_t element, uint8_t side);
+    void SendActionPublisherFailure(uint8_t element);
     void DoActionCallback(const sonia_common::ActuatorDoAction::ConstPtr &receivedData);
-    bool DoActionSrvCallback(sonia_common::ActuatorDoActionSrv::Request &request, sonia_common::ActuatorDoActionSrv::Response &response);
-
 };
 
 }  // namespace provider_actuators
