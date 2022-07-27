@@ -3,6 +3,7 @@ name: Docker Image CI - Develop Branch
 on:
   push:
     branches: [develop]
+  repository_dispatch:
 
 jobs:
   build-ros-perception-x86-64:
