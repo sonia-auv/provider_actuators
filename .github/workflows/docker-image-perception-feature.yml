@@ -3,8 +3,6 @@ name: Docker Image CI - Feature Branch
 on:
   push:
     branches: [feature/**]
-  repository_dispatch:
-    types: [build_application]
 
 jobs:
   build-ros-perception-x86-64:
